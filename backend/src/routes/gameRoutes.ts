@@ -20,6 +20,19 @@ router.post('/games', async (req, res) => {
   res.status(201).json(game);
 }); 
 
+// Join a remote game (Player 2 joins with gameId)
+router.get('/games/:gameId/join', async (req, res) => {
+  const { gameId } = req.params;
+  // In a real app, you'd identify/join the player here (e.g., assign as 'o')
+  // For now, just return the game if it exists
+  const game = await getGame(gameId);
+  if (!game) {
+    return res.status(404).json({ error: 'Game not found' });
+  }
+  // Optionally, mark the game as "joined" or assign player 2 here
+  res.json(game);
+});
+
 // Get game state
 router.get('/games/:gameId', async (req, res) => {
   const { gameId } = req.params;
@@ -31,6 +44,7 @@ router.get('/games/:gameId', async (req, res) => {
 });
 
 // Make a move
+// In a real app, you'd check which player is making the move using authentication
 router.post('/games/:gameId/move', async (req, res) => {
   const { gameId } = req.params;
   const { row, side } = req.body as { row: number; side: 'L' | 'R' };

@@ -10,7 +10,7 @@ A full-stack implementation of the Side-Stacker game (a Connect-Four variant) wi
   Players take turns adding pieces to either side of any row. Pieces stack horizontally, not vertically.
 - **Game Modes:**  
   - Player vs Player (local)
-  - Player vs Player (remote/demo) TODO
+  - Player vs Player (remote/demo, limited to 'shared screen', player authenticate need to be impl)
   - Player vs AI (easy & medium difficulty)
   - AI vs AI (watch two bots play)
 - **AI Opponent:**  
@@ -90,4 +90,11 @@ A full-stack implementation of the Side-Stacker game (a Connect-Four variant) wi
   Only players can view games in progress.
 - **Missing debug tools**  
   For development, better debug configurable would be required, add a logger & tracing, add error handling & data validation
+- **Game Restart Not Functional**  
+  The "Restart Game" feature is not yet implemented. Players must refresh the page and start a new game session to play again; an in-game restart button is planned.
+- **Player Turn Choice:**  
+  Enable players to select whether they want to play first or second.
+- **Highlight Recent Move:**  
+  Highlight indicate the opponent's latest move to enhance user experience.
+
 

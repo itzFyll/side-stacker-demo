@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Board from '@components/Board';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@redux/store';
-import { createGame, makeMove, fetchGame } from '@redux/gameSlice';
+import { createGame, makeMove, fetchGame, joinGame } from '@redux/gameSlice'; // <-- add joinGame
 import { AiDifficulty, GameMode } from 'models/types';
 import './GameScreen.css';
 
@@ -26,12 +26,16 @@ const GameScreen: React.FC = () => {
   const [ai2Difficulty, setAi2Difficulty] = useState<AiDifficulty>('easy');
   const [gameStarted, setGameStarted] = useState(false);
 
+  // For remote join
+  const [joinGameId, setJoinGameId] = useState('');
+  const [joining, setJoining] = useState(false);
+
   // Only create the game when user clicks "Start Game"
   useEffect(() => {
-    if (gameStarted && gameMode) {
+    if (gameStarted && gameMode && gameMode !== 'remote') {
       dispatch(createGame({ gameMode, ai1Difficulty, ai2Difficulty }));
     }
-  }, [dispatch, gameStarted]);
+  }, [dispatch, gameStarted, gameMode, ai1Difficulty, ai2Difficulty]);
 
   // Poll for updates every 2s (for multiplayer/AI)
   useEffect(() => {
@@ -48,10 +52,9 @@ const GameScreen: React.FC = () => {
     if (gameMode === 'local') {
       canMove = true;
     } else if (gameMode === 'ai') {
-      // User is always 'x', AI is 'o'
       canMove = currentPlayer === 'x';
     } else if (gameMode === 'remote') {
-      // For demo: allow both, but in real app, check user id
+      // For demo: alternate turns, but in real app, check user id
       canMove = true;
     } else if (gameMode === 'aiOnly') {
       canMove = false;
@@ -69,10 +72,18 @@ const GameScreen: React.FC = () => {
   const handleGameModeSelect = (mode: GameMode) => {
     setGameMode(mode);
     setGameStarted(false); // Reset if user changes mode
+    setJoinGameId('');
+    setJoining(false);
   };
 
   const handleStartGame = () => {
-    if (gameMode) setGameStarted(true);
+    if (gameMode === 'remote') {
+      // For remote, create game and show game ID for sharing
+      dispatch(createGame({ gameMode, ai1Difficulty, ai2Difficulty }));
+      setGameStarted(true);
+    } else if (gameMode) {
+      setGameStarted(true);
+    }
   };
 
   const handleRestart = () => {
@@ -80,7 +91,18 @@ const GameScreen: React.FC = () => {
     setAi1Difficulty('easy');
     setAi2Difficulty('easy');
     setGameStarted(false);
+    setJoinGameId('');
+    setJoining(false);
     // Optionally, dispatch a reset action here
+  };
+
+  // Handle joining a remote game
+  const handleJoinRemoteGame = async () => {
+    if (!joinGameId) return;
+    setJoining(true);
+    await dispatch(joinGame(joinGameId));
+    setGameStarted(true);
+    setJoining(false);
   };
 
   return (
@@ -102,6 +124,44 @@ const GameScreen: React.FC = () => {
               </button>
             ))}
           </div>
+          {gameMode === 'remote' && !id && (
+            <div className="game-screen__remote">
+              <button
+                className="game-screen__start-btn"
+                type="button"
+                onClick={handleStartGame}
+              >
+                Create Remote Game
+              </button>
+              <div className="game-screen__remote-join">
+                <input
+                  type="text"
+                  placeholder="Enter Game ID"
+                  value={joinGameId}
+                  onChange={(e) => setJoinGameId(e.target.value)}
+                  disabled={joining}
+                />
+                <button
+                  type="button"
+                  onClick={handleJoinRemoteGame}
+                  disabled={!joinGameId || joining}
+                >
+                  {joining ? 'Joining...' : 'Join Game'}
+                </button>
+              </div>
+            </div>
+          )}
+          {gameMode === 'remote' && id && (
+            <div className="game-screen__remote-info">
+              <div>
+                <strong>Share this Game ID:</strong>
+                <div className="game-screen__remote-id">{id}</div>
+              </div>
+              <div>
+                <em>Waiting for both players to join and play...</em>
+              </div>
+            </div>
+          )}
           {aiModeSelected && (
             <div className="game-screen__ai-options">
               <div>
@@ -136,14 +196,16 @@ const GameScreen: React.FC = () => {
               )}
             </div>
           )}
-          <button
-            className="game-screen__start-btn"
-            type="button"
-            onClick={handleStartGame}
-            disabled={!gameMode}
-          >
-            Start Game
-          </button>
+          {gameMode !== 'remote' && (
+            <button
+              className="game-screen__start-btn"
+              type="button"
+              onClick={handleStartGame}
+              disabled={!gameMode}
+            >
+              Start Game
+            </button>
+          )}
         </div>
       ) : null}
 
@@ -158,6 +220,12 @@ const GameScreen: React.FC = () => {
       {gameMode === 'ai' && status === 'in_progress' && currentPlayer === 'o' && (
         <div className="game-screen__status">
           <em>Waiting for AI to play...</em>
+        </div>
+      )}
+
+      {gameMode === 'remote' && status === 'in_progress' && (
+        <div className="game-screen__status">
+          <em>Waiting for the other player to make a move...</em>
         </div>
       )}
 

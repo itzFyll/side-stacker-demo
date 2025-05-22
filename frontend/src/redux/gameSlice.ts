@@ -55,6 +55,14 @@ export const fetchGame = createAsyncThunk(
   },
 );
 
+export const joinGame = createAsyncThunk(
+  'game/joinGame',
+  async (gameId: string) => {
+    const res = await axios.get(`/games/${gameId}/join`);
+    return res.data;
+  },
+);
+
 export const makeMove = createAsyncThunk(
   'game/makeMove',
   async ({
@@ -94,6 +102,13 @@ const gameSlice = createSlice({
         state.error = action.error.message || 'Failed to create game';
       })
       .addCase(fetchGame.fulfilled, (state, action: PayloadAction<Game>) => {
+        state.id = action.payload.id;
+        state.board = action.payload.board;
+        state.currentPlayer = action.payload.currentPlayer;
+        state.status = action.payload.status;
+        state.winner = action.payload.winner;
+      })
+      .addCase(joinGame.fulfilled, (state, action: PayloadAction<Game>) => {
         state.id = action.payload.id;
         state.board = action.payload.board;
         state.currentPlayer = action.payload.currentPlayer;
