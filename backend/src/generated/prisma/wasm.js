@@ -130,7 +130,8 @@ exports.Prisma.GameScalarFieldEnum = {
   aiDifficulty1: 'aiDifficulty1',
   aiDifficulty2: 'aiDifficulty2',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  lastMoveAt: 'lastMoveAt'
 };
 
 exports.Prisma.SortOrder = {

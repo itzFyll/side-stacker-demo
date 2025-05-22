@@ -17,12 +17,13 @@ function toDomainGame(prismaGame: PrismaGame): Game {
     aiDifficulty2: prismaGame.aiDifficulty2 as AiDifficulty | null,
     createdAt: prismaGame.createdAt,
     updatedAt: prismaGame.updatedAt,
+    lastMoveAt: prismaGame.lastMoveAt,
   };
 }
 
 // --- Repo methods ---
 
-export async function createGame(game: Omit<Game, 'createdAt' | 'updatedAt'>): Promise<Game> {
+export async function createGame(game: Omit<Game, 'createdAt' | 'updatedAt' | 'lastMoveAt'>): Promise<Game> {
   const prismaGame = await prisma.game.create({
     data: {
       id: game.id,
@@ -33,6 +34,7 @@ export async function createGame(game: Omit<Game, 'createdAt' | 'updatedAt'>): P
       gameMode: game.gameMode,
       aiDifficulty1: game.aiDifficulty1,
       aiDifficulty2: game.aiDifficulty2,
+      lastMoveAt: new Date(),
     },
   });
   const gameDto = toDomainGame(prismaGame);
@@ -56,6 +58,7 @@ export async function updateGame(
       currentPlayer: data.currentPlayer,
       status: data.status,
       winner: data.winner,
+      lastMoveAt: new Date(),
     },
   });
   return toDomainGame(prismaGame);

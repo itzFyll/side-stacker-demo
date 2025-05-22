@@ -7,14 +7,16 @@ import { AiDifficulty, GameMode } from 'models/types';
  * Should add params verification and error handling
  * Should add tracing and logging
  * Should add authentication & authorization
+ * Should move logic to controller that will call the service
+ * Should add tests
  */
 
 const router = Router();
 
 // Create a new game
 router.post('/games', async (req, res) => {
-  const { gameMode, aiDiff1, aiDiff2 } = req.body as { gameMode?: GameMode; aiDiff1?: AiDifficulty; aiDiff2?: AiDifficulty };
-  const game = await createGame(gameMode, aiDiff1, aiDiff2);
+  const { gameMode, ai1Difficulty, ai2Difficulty } = req.body as { gameMode: GameMode; ai1Difficulty: AiDifficulty; ai2Difficulty: AiDifficulty };
+  const game = await createGame(gameMode, ai1Difficulty, ai2Difficulty);
   res.status(201).json(game);
 }); 
 

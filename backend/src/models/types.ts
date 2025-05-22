@@ -2,8 +2,9 @@ export type Cell = 'x' | 'o' | null;
 export type Player = 'x' | 'o';
 export type Status = 'in_progress' | 'won' | 'draw';
 
-export type GameMode = 'local' | 'remote' | 'ai' | 'ai-vs-ai';
+export type GameMode = 'local' | 'remote' | 'ai' | 'aiOnly';
 export type AiDifficulty = 'easy' | 'medium';
+export type Move = { row: number; side: 'L' | 'R' };
 
 export interface Game {
   id: string;
@@ -17,4 +18,5 @@ export interface Game {
   aiDifficulty2: AiDifficulty | null;
   createdAt: Date;
   updatedAt: Date;
+  lastMoveAt: Date;
 }

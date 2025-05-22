@@ -10,10 +10,10 @@ const GAME_MODE_LABELS: Record<GameMode, string> = {
   local: 'Player vs Player (local)',
   remote: 'Player vs Player (remote)',
   ai: 'Player vs AI',
-  'ai-vs-ai': 'AI vs AI',
+  aiOnly: 'AI vs AI',
 };
 
-const GAME_MODES: GameMode[] = ['local', 'remote', 'ai', 'ai-vs-ai'];
+const GAME_MODES: GameMode[] = ['local', 'remote', 'ai', 'aiOnly'];
 
 const GameScreen: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -33,7 +33,7 @@ const GameScreen: React.FC = () => {
     }
   }, [dispatch, gameStarted]);
 
-  // Poll for updates every 2s (for multiplayer)
+  // Poll for updates every 2s (for multiplayer/AI)
   useEffect(() => {
     if (!id) return;
     const interval = setInterval(() => {
@@ -42,8 +42,27 @@ const GameScreen: React.FC = () => {
     return () => clearInterval(interval);
   }, [id, dispatch]);
 
+  // Determine if user can make a move
+  let canMove = false;
+  if (gameStarted && gameMode && status === 'in_progress') {
+    if (gameMode === 'local') {
+      canMove = true;
+    } else if (gameMode === 'ai') {
+      // User is always 'x', AI is 'o'
+      canMove = currentPlayer === 'x';
+    } else if (gameMode === 'remote') {
+      // For demo: allow both, but in real app, check user id
+      canMove = true;
+    } else if (gameMode === 'aiOnly') {
+      canMove = false;
+    }
+  }
+
+  // For AI vs AI, show a message
+  const aiModeSelected = gameMode === 'ai' || gameMode === 'aiOnly';
+
   const handleCellClick = (row: number, side: 'L' | 'R') => {
-    if (!id || status !== 'in_progress') return;
+    if (!id || status !== 'in_progress' || !canMove) return;
     dispatch(makeMove({ gameId: id, row, side }));
   };
 
@@ -63,8 +82,6 @@ const GameScreen: React.FC = () => {
     setGameStarted(false);
     // Optionally, dispatch a reset action here
   };
-
-  const aiModeSelected = gameMode === 'ai' || gameMode === 'ai-vs-ai';
 
   return (
     <div className="game-screen">
@@ -101,7 +118,7 @@ const GameScreen: React.FC = () => {
                   </select>
                 </label>
               </div>
-              {gameMode === 'ai-vs-ai' && (
+              {gameMode === 'aiOnly' && (
                 <div>
                   <label>
                     AI 2 Difficulty:
@@ -132,11 +149,23 @@ const GameScreen: React.FC = () => {
 
       {loading && <div>Loading...</div>}
 
+      {gameMode === 'aiOnly' && status === 'in_progress' && (
+        <div className="game-screen__status">
+          <em>AI vs AI in progress... Sit back and watch!</em>
+        </div>
+      )}
+
+      {gameMode === 'ai' && status === 'in_progress' && currentPlayer === 'o' && (
+        <div className="game-screen__status">
+          <em>Waiting for AI to play...</em>
+        </div>
+      )}
+
       <Board
         board={board}
         onCellClick={handleCellClick}
         currentPlayer={currentPlayer}
-        disabled={!gameStarted || !gameMode || status !== 'in_progress'}
+        disabled={!canMove}
       />
 
       {status === 'won' && <div>{winner?.toUpperCase()} wins!</div>}

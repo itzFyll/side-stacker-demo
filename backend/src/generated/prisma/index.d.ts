@@ -889,6 +889,7 @@ export namespace Prisma {
     aiDifficulty2: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    lastMoveAt: Date | null
   }
 
   export type GameMaxAggregateOutputType = {
@@ -901,6 +902,7 @@ export namespace Prisma {
     aiDifficulty2: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    lastMoveAt: Date | null
   }
 
   export type GameCountAggregateOutputType = {
@@ -914,6 +916,7 @@ export namespace Prisma {
     aiDifficulty2: number
     createdAt: number
     updatedAt: number
+    lastMoveAt: number
     _all: number
   }
 
@@ -928,6 +931,7 @@ export namespace Prisma {
     aiDifficulty2?: true
     createdAt?: true
     updatedAt?: true
+    lastMoveAt?: true
   }
 
   export type GameMaxAggregateInputType = {
@@ -940,6 +944,7 @@ export namespace Prisma {
     aiDifficulty2?: true
     createdAt?: true
     updatedAt?: true
+    lastMoveAt?: true
   }
 
   export type GameCountAggregateInputType = {
@@ -953,6 +958,7 @@ export namespace Prisma {
     aiDifficulty2?: true
     createdAt?: true
     updatedAt?: true
+    lastMoveAt?: true
     _all?: true
   }
 
@@ -1039,6 +1045,7 @@ export namespace Prisma {
     aiDifficulty2: string | null
     createdAt: Date
     updatedAt: Date
+    lastMoveAt: Date
     _count: GameCountAggregateOutputType | null
     _min: GameMinAggregateOutputType | null
     _max: GameMaxAggregateOutputType | null
@@ -1069,6 +1076,7 @@ export namespace Prisma {
     aiDifficulty2?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    lastMoveAt?: boolean
   }, ExtArgs["result"]["game"]>
 
   export type GameSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1082,6 +1090,7 @@ export namespace Prisma {
     aiDifficulty2?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    lastMoveAt?: boolean
   }, ExtArgs["result"]["game"]>
 
   export type GameSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1095,6 +1104,7 @@ export namespace Prisma {
     aiDifficulty2?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    lastMoveAt?: boolean
   }, ExtArgs["result"]["game"]>
 
   export type GameSelectScalar = {
@@ -1108,9 +1118,10 @@ export namespace Prisma {
     aiDifficulty2?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    lastMoveAt?: boolean
   }
 
-  export type GameOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "board" | "currentPlayer" | "status" | "winner" | "gameMode" | "aiDifficulty1" | "aiDifficulty2" | "createdAt" | "updatedAt", ExtArgs["result"]["game"]>
+  export type GameOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "board" | "currentPlayer" | "status" | "winner" | "gameMode" | "aiDifficulty1" | "aiDifficulty2" | "createdAt" | "updatedAt" | "lastMoveAt", ExtArgs["result"]["game"]>
 
   export type $GamePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Game"
@@ -1126,6 +1137,7 @@ export namespace Prisma {
       aiDifficulty2: string | null
       createdAt: Date
       updatedAt: Date
+      lastMoveAt: Date
     }, ExtArgs["result"]["game"]>
     composites: {}
   }
@@ -1559,6 +1571,7 @@ export namespace Prisma {
     readonly aiDifficulty2: FieldRef<"Game", 'String'>
     readonly createdAt: FieldRef<"Game", 'DateTime'>
     readonly updatedAt: FieldRef<"Game", 'DateTime'>
+    readonly lastMoveAt: FieldRef<"Game", 'DateTime'>
   }
     
 
@@ -1949,7 +1962,8 @@ export namespace Prisma {
     aiDifficulty1: 'aiDifficulty1',
     aiDifficulty2: 'aiDifficulty2',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    lastMoveAt: 'lastMoveAt'
   };
 
   export type GameScalarFieldEnum = (typeof GameScalarFieldEnum)[keyof typeof GameScalarFieldEnum]
@@ -2073,6 +2087,7 @@ export namespace Prisma {
     aiDifficulty2?: StringNullableFilter<"Game"> | string | null
     createdAt?: DateTimeFilter<"Game"> | Date | string
     updatedAt?: DateTimeFilter<"Game"> | Date | string
+    lastMoveAt?: DateTimeFilter<"Game"> | Date | string
   }
 
   export type GameOrderByWithRelationInput = {
@@ -2086,6 +2101,7 @@ export namespace Prisma {
     aiDifficulty2?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    lastMoveAt?: SortOrder
   }
 
   export type GameWhereUniqueInput = Prisma.AtLeast<{
@@ -2102,6 +2118,7 @@ export namespace Prisma {
     aiDifficulty2?: StringNullableFilter<"Game"> | string | null
     createdAt?: DateTimeFilter<"Game"> | Date | string
     updatedAt?: DateTimeFilter<"Game"> | Date | string
+    lastMoveAt?: DateTimeFilter<"Game"> | Date | string
   }, "id">
 
   export type GameOrderByWithAggregationInput = {
@@ -2115,6 +2132,7 @@ export namespace Prisma {
     aiDifficulty2?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    lastMoveAt?: SortOrder
     _count?: GameCountOrderByAggregateInput
     _max?: GameMaxOrderByAggregateInput
     _min?: GameMinOrderByAggregateInput
@@ -2134,6 +2152,7 @@ export namespace Prisma {
     aiDifficulty2?: StringNullableWithAggregatesFilter<"Game"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Game"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Game"> | Date | string
+    lastMoveAt?: DateTimeWithAggregatesFilter<"Game"> | Date | string
   }
 
   export type GameCreateInput = {
@@ -2147,6 +2166,7 @@ export namespace Prisma {
     aiDifficulty2?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastMoveAt?: Date | string
   }
 
   export type GameUncheckedCreateInput = {
@@ -2160,6 +2180,7 @@ export namespace Prisma {
     aiDifficulty2?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastMoveAt?: Date | string
   }
 
   export type GameUpdateInput = {
@@ -2173,6 +2194,7 @@ export namespace Prisma {
     aiDifficulty2?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastMoveAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GameUncheckedUpdateInput = {
@@ -2186,6 +2208,7 @@ export namespace Prisma {
     aiDifficulty2?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastMoveAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GameCreateManyInput = {
@@ -2199,6 +2222,7 @@ export namespace Prisma {
     aiDifficulty2?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastMoveAt?: Date | string
   }
 
   export type GameUpdateManyMutationInput = {
@@ -2212,6 +2236,7 @@ export namespace Prisma {
     aiDifficulty2?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastMoveAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GameUncheckedUpdateManyInput = {
@@ -2225,6 +2250,7 @@ export namespace Prisma {
     aiDifficulty2?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastMoveAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -2307,6 +2333,7 @@ export namespace Prisma {
     aiDifficulty2?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    lastMoveAt?: SortOrder
   }
 
   export type GameMaxOrderByAggregateInput = {
@@ -2319,6 +2346,7 @@ export namespace Prisma {
     aiDifficulty2?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    lastMoveAt?: SortOrder
   }
 
   export type GameMinOrderByAggregateInput = {
@@ -2331,6 +2359,7 @@ export namespace Prisma {
     aiDifficulty2?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    lastMoveAt?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {

@@ -1,8 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Game, Cell, Player, Status, AiDifficulty, GameMode } from 'models/types';
 import * as gameRepo from './prismaGameRepo';
+import { getAINextMove } from './aiGameService';
 
 const BOARD_SIZE = 7;
+const AI_MOVE_DELAY_MS = 1000; // 1 second
 
 function createEmptyBoard(): Cell[][] {
   return Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(null));
@@ -50,7 +52,7 @@ function checkDraw(board: Cell[][]): boolean {
 export async function createGame(gameMode: GameMode, aiDiff1: AiDifficulty, aiDiff2: AiDifficulty): Promise<Game> {
   const id = uuidv4();
   const board = createEmptyBoard();
-  const game: Omit<Game, 'createdAt' | 'updatedAt'> = {
+  const game: Omit<Game, 'createdAt' | 'updatedAt' | 'lastMoveAt'> = {
     id,
     board,
     currentPlayer: 'x',
@@ -64,7 +66,11 @@ export async function createGame(gameMode: GameMode, aiDiff1: AiDifficulty, aiDi
 }
 
 export async function getGame(gameId: string): Promise<Game | undefined> {
-  return await gameRepo.getGame(gameId);
+  let game = await gameRepo.getGame(gameId);
+  if (game && (await shouldTriggerAIMove(game))) {
+    game = await handleAIMoves(game);
+  }
+  return game;
 }
 
 export async function makeMove(gameId: string, row: number, side: 'L' | 'R'): Promise<Game | undefined> {
@@ -105,10 +111,33 @@ export async function makeMove(gameId: string, row: number, side: 'L' | 'R'): Pr
 
   const nextPlayer: Player = game.currentPlayer === 'x' ? 'o' : 'x';
 
+  // Update game after player move
   return await gameRepo.updateGame(gameId, {
     board,
     currentPlayer: status === 'in_progress' ? nextPlayer : game.currentPlayer,
     status,
     winner,
   });
+}
+
+async function shouldTriggerAIMove(game: Game): Promise<boolean> {
+  let result = false;
+  if (game && game.status === 'in_progress' && ((game.gameMode === 'ai' && game.currentPlayer === 'o') || game.gameMode === 'aiOnly')) {
+    const now = Date.now();
+    const lastMoveAt = new Date(game.lastMoveAt).getTime();
+    if (now - lastMoveAt >= AI_MOVE_DELAY_MS) {
+      result = true;
+    }
+  }
+  return result;
+}
+
+async function handleAIMoves(game: Game): Promise<Game | undefined> {
+  const aiPlayer = game.currentPlayer as Player;
+  const aiDifficulty = game.gameMode === 'ai' ? game.aiDifficulty1 || 'easy' : aiPlayer === 'x' ? game.aiDifficulty1 || 'easy' : game.aiDifficulty2 || 'easy';
+
+  const aiMove = getAINextMove(game, aiPlayer, aiDifficulty);
+  const aiMoveResult = await makeMove(game.id, aiMove.row, aiMove.side);
+
+  return aiMoveResult;
 }
